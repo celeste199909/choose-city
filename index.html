@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="zh_CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="./sytle.css">
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+
+<body>
+
+    <div id="app">
+        <!-- 出发地 -->
+        <div id="start-box">
+            <input type="text" class="start" placeholder="出发地" 
+            v-model="start" @focus="handleShowStartAssistLayer"
+            @input="handleStartInputChange">
+            <!-- 辅助选择层 -->
+            <div id="assist-layer" v-if="showStartSAssistLayer && !filterStartCities">
+                <span v-for="(item, index) in cities" 
+                :data-value="item" 
+                @click="handleSelectStart">{{item}}</span>
+            </div>
+            <!-- 提示列表 -->
+            <div class="select-list" v-show="filterStartCities">
+                <div class="select-item" 
+                v-for="(item, index) in filterStartCities" :key="index" 
+                :data-value="item" 
+                @click="handleSelectStart" 
+                >{{item}}</div>
+            </div>
+        </div>
+        <!-- 交换按钮 -->
+        <div class="interchange">
+            <svg class="btn" @click="handleInterChange" t="1603781086226" class="icon" viewBox="0 0 1024 1024"
+                version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3122" width="200" height="200">
+                <path
+                    d="M468.8896 796.125867l-50.312533 46.148266L178.414933 580.266667H853.333333v68.266666H333.585067l135.304533 147.592534zM690.414933 375.466667l-135.304533-147.592534 50.312533-46.148266L845.585067 443.733333H170.666667v-68.266666h519.748266z"
+                    p-id="3123"></path>
+            </svg>
+        </div>
+        <!-- 目的地 -->
+        <div id="destination-box">
+            <input type="text" class="destination" placeholder="目的地" 
+            v-model="destination" @input="handleDestinationInputChange"
+             @focus="handleShowDestinationAssistLayer" >
+             <!-- 辅助选择层 -->
+             <div id="assist-layer" v-if="showDestinationSAssistLayer && !filterDestinationCities">
+                <span v-for="(item, index) in cities" 
+                :data-value="item" 
+                @click="handleSelectDestination">{{item}}</span>
+            </div>
+            <!-- 提示列表 -->
+            <div class="select-list" v-show="filterDestinationCities">
+                <div class="select-item" 
+                v-for="(item, index) in filterDestinationCities" 
+                :key="index" 
+                :data-value="item" 
+                @click="handleSelectDestination" 
+                >{{item}}</div>
+            </div>
+        </div>
+
+
+    </div>
+
+</body>
+<script>
+    let app = new Vue({
+        el: "#app",
+        data() {
+            return {
+                start: "",
+                destination: "",
+                showStartSAssistLayer: false,
+                showDestinationSAssistLayer: false,
+                cities: ["北京", "上海", "广州", "深圳", "成都", "杭州", "武汉", "西安", "重庆", "青岛", "长沙", "桂林", "南京", "南宁"],
+                filterStartCities: null,
+                filterDestinationCities: null,
+            }
+        },
+        methods: {
+            handleInterChange() {
+                let temp = "";
+                temp = this.start;
+                this.start = this.destination;
+                this.destination = temp;
+            },
+            handleShowStartAssistLayer(){
+                this.showStartSAssistLayer = !this.showStartSAssistLayer;
+                this.showDestinationSAssistLayer = false;
+            },
+            handleShowDestinationAssistLayer(){
+                this.showStartSAssistLayer = false;
+                this.showDestinationSAssistLayer = !this.showDestinationSAssistLayer;
+            },
+            handleStartInputChange() {
+                // 判断输入不为空时，过滤数组
+                if (this.start) {
+                    let re = new RegExp(this.start)
+                    let filterResult = this.cities.filter((item, index, array) => {
+                        return re.test(item);
+                    })
+                    if(filterResult.length !== 0){
+                        this.filterStartCities = filterResult;
+                    }
+                    // 测试
+                    // console.log(filterResult);
+                }else{
+                    // 重置为空以隐藏提示列表
+                    this.filterStartCities = null;
+                }
+            },
+            handleDestinationInputChange(){
+                if (this.destination) {
+                    let re = new RegExp(this.destination)
+                    let filterResult = this.cities.filter((item, index, array) => {
+                        return re.test(item);
+                    })
+                    if(filterResult.length !== 0){
+                        this.filterDestinationCities = filterResult;
+                    }
+                }else{
+                    this.filterDestinationCities = null;
+                }
+            },
+            handleSelectStart(e){
+                this.start = e.target.dataset.value;
+                this.showStartSAssistLayer = false;
+            },
+            handleSelectDestination(e){
+                this.showDestinationSAssistLayer = false;
+                this.destination = e.target.dataset.value;
+            },
+        }
+    })
+</script>
+
+</html>
