@@ -129,10 +129,13 @@
             handleSelectStart(e){
                 this.start = e.target.dataset.value;
                 this.showStartSAssistLayer = false;
+                this.filterStartCities = null;
             },
             handleSelectDestination(e){
                 this.showDestinationSAssistLayer = false;
                 this.destination = e.target.dataset.value;
+                this.filterDestinationCities = null;
+
             },
         }
     })
